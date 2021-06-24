@@ -1,0 +1,25 @@
+{
+  "name": "YelpCamp",
+  "version": "1.0.0",
+  "description": "This is a Full Stack Website from Colt Steele's Web Developers Bootcamp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pratikkarelia25/YelpCamp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pratikkarelia25/YelpCamp/issues"
+  },
+  "homepage": "https://github.com/pratikkarelia25/YelpCamp#readme",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "mongoose": "^5.12.14"
+  }
+}
