@@ -9,6 +9,7 @@ const Campground = require('./models/campground');
 const ejsMate = require('ejs-mate')
 const methodOverride = require('method-override');
 const { send } = require('process');
+const flash = require('connect-flash');
 const bodyParser = require('body-parser')
 const Review = require('./models/review'); 
 const {campgroundSchema , reviewSchema} = require('./schemas.js')
@@ -32,18 +33,16 @@ app.set('views',path.join(__dirname,'views'))
 app.use(bodyParser.urlencoded({
     extended:true
 }))
+app.use(flash());
 app.use(methodOverride('_method'))
-app.get('/',(req,res)=>{
-    res.render('home')
-});
-app.use('/campgrounds',campgrounds)
-app.use('/campgrounds/:id/reviews',reviews)
-app.use(express.static(path.join(__dirname,'public')))
-app.use((err,req,res,next)=>{
-    const {status = 500} = err;
+// app.get('/',(req,res)=>{
+    //     res.render('home')
+    // });
+    app.use(express.static(path.join(__dirname,'public')))
+    app.use((err,req,res,next)=>{
+        const {status = 500} = err;
     if(!err.message) err.message = 'Oh no, Something went wrong'
-    res.status(status).render('error',{err})
-    
+    res.status(status).render('error',{err})  
 })
 
 const sessionConfig = {
@@ -55,8 +54,15 @@ const sessionConfig = {
         maxAge: 1000*60*60*27*7
     }
 }
-
 app.use(session(sessionConfig))
+
+app.use((req,res,next)=>{
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+})
+app.use('/campgrounds',campgrounds)
+app.use('/campgrounds/:id/reviews',reviews)
 
 // app.all('*',(req,res,next)=>{
 //     next(new expressError('Page not found',404))
