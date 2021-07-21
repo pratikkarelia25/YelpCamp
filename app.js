@@ -13,9 +13,13 @@ const flash = require('connect-flash');
 const bodyParser = require('body-parser')
 const Review = require('./models/review'); 
 const {campgroundSchema , reviewSchema} = require('./schemas.js')
-const campgrounds = require('./routes/campground');
-const reviews = require('./routes/reviews')
+const campgroundsRoutes = require('./routes/campground');
+const reviewsRoutes = require('./routes/reviews');
+const userRoutes = require('./routes/users')
 const campground = require('./models/campground');
+const passport = require('passport');
+const localStrategy = require('passport-local')
+const User = require('./models/user');
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true, 
     useUnifiedTopology: true
@@ -35,9 +39,6 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(flash());
 app.use(methodOverride('_method'))
-// app.get('/',(req,res)=>{
-    //     res.render('home')
-    // });
     app.use(express.static(path.join(__dirname,'public')))
     app.use((err,req,res,next)=>{
         const {status = 500} = err;
@@ -55,14 +56,19 @@ const sessionConfig = {
     }
 }
 app.use(session(sessionConfig))
-
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 app.use((req,res,next)=>{
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     next();
 })
-app.use('/campgrounds',campgrounds)
-app.use('/campgrounds/:id/reviews',reviews)
+app.use('/campgrounds',campgroundsRoutes)
+app.use('/campgrounds/:id/reviews',reviewsRoutes)
+app.use('/',userRoutes)
 
 // app.all('*',(req,res,next)=>{
 //     next(new expressError('Page not found',404))
