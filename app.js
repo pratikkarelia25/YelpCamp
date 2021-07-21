@@ -68,7 +68,7 @@ app.use((req,res,next)=>{
 })
 app.use('/campgrounds',campgroundsRoutes)
 app.use('/campgrounds/:id/reviews',reviewsRoutes)
-app.use('/',userRoutes)
+app.use('/',userRoutes);
 
 // app.all('*',(req,res,next)=>{
 //     next(new expressError('Page not found',404))
