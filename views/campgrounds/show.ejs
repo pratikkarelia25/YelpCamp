@@ -13,20 +13,19 @@
                     </p>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <%= campground.location %>
-                    </li>
-                    <li class="list-group-item">$<%= campground.price %>/night </li>
-                </ul>
+                    <li class="list-group-item"><%= campground.location %></li>
+                    <!-- <li class="list-group-item">Submitted by  </li> -->
+                    <li class="list-group-item">$<%= campground.price %>/night</li>
+                </ul>    
                 <div class="card-body">
                     <a href="/campgrounds/<%= campground._id %>/edit" class="card-link btn btn-info">Edit</a>
                     <form class="d-inline" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
                         <button class="btn btn-danger" type="submit">Delete</button>
                     </form>
-                </div>
+                </div>   
                 <div class="card-footer text-muted">
                     2 days ago
-                </div>
+                </div>  
             </div>
         </div>
         <div class="col-6">

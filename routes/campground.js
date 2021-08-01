@@ -5,6 +5,7 @@ const Campground = require('../models/campground');
 const expressError = require('../utils/expressError');
 const {campgroundSchema } = require('../schemas.js')
 const {isLoggedIn} = require('../middleware');
+const campground = require('../models/campground');
 
 const validateCampground = (req,res,next)=>{
     const {error} = campgroundSchema.validate(req.body);
@@ -27,14 +28,15 @@ router.get('/new',isLoggedIn,(req,res)=>{
 })
 
 router.post('/',isLoggedIn,validateCampground,catchAsync(async(req,res)=>{
-    const newCampground = await Campground(req.body.campground)
+    const newCampground = await Campground(req.body.campground);
+    campground.author = req.body._id;
     newCampground.save();
     req.flash('success','Sucessfully made a new campground')
     res.redirect(`/campgrounds/${newCampground._id}`)
 }))
 
 router.get('/:id',catchAsync(async(req,res)=>{
-    const campground = await Campground.findById(req.params.id).populate('reviews')
+    const campground = await Campground.findById(req.params.id).populate('reviews').populate('author');
     if(!campground){
         req.flash("error","Cannot find the campground");
         res.redirect('/campgrounds')
