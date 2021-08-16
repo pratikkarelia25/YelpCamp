@@ -3,26 +3,21 @@ const app = express();
 const path = require('path')
 const mongoose = require('mongoose');
 const session = require('express-session');
-const catchAsync = require('./utils/catchAsync');
-const expressError = require('./utils/expressError');
 const Campground = require('./models/campground');
 const ejsMate = require('ejs-mate')
 const methodOverride = require('method-override');
 const { send } = require('process');
 const flash = require('connect-flash');
-const bodyParser = require('body-parser')
-const Review = require('./models/review'); 
-const {campgroundSchema , reviewSchema} = require('./schemas.js')
 const campgroundsRoutes = require('./routes/campground');
 const reviewsRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users')
-const campground = require('./models/campground');
 const passport = require('passport');
 const localStrategy = require('passport-local')
 const User = require('./models/user');
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true, 
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useCreateIndex:true
 });
 
 const db = mongoose.connection;
@@ -34,9 +29,7 @@ db.once("open",()=>{
 app.engine('ejs',ejsMate);
 app.set('view engine', 'ejs')
 app.set('views',path.join(__dirname,'views'))
-app.use(bodyParser.urlencoded({
-    extended:true
-}))
+app.use(express.urlencoded({extended:true}))
 app.use(flash());
 app.use(methodOverride('_method'))
     app.use(express.static(path.join(__dirname,'public')))
@@ -61,12 +54,14 @@ app.use(passport.session());
 passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-app.use((req,res,next)=>{
-    res.locals.currentUsers = req.user;
-    res.locals.success = req.flash("success");
-    res.locals.error = req.flash("error");
+
+app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
     next();
 })
+
 app.use('/campgrounds',campgroundsRoutes)
 app.use('/campgrounds/:id/reviews',reviewsRoutes)
 app.use('/',userRoutes);
