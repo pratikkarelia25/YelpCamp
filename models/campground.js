@@ -3,7 +3,10 @@ const Schema = mongoose.Schema;
 const Review = require('./review')
 const CampgroundSchema = new Schema({
     title: String,
-    image: String,
+    image: {
+            url: String,
+            filename: String
+        },
     price: Number,
     description: String,
     location: String,
@@ -28,4 +31,5 @@ CampgroundSchema.post('findOneAndDelete',async function(doc){
         })
     }
 })
+
 module.exports = mongoose.model('Campground',CampgroundSchema)

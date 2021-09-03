@@ -10,6 +10,7 @@ const Campground = require('./models/campground');
 const ejsMate = require('ejs-mate')
 const methodOverride = require('method-override');
 const { send } = require('process');
+const morgan = require('morgan')
 const flash = require('connect-flash');
 const campgroundsRoutes = require('./routes/campground');
 const reviewsRoutes = require('./routes/reviews');
@@ -20,7 +21,8 @@ const User = require('./models/user');
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true, 
     useUnifiedTopology: true,
-    useCreateIndex:true
+    useCreateIndex:true,
+    useFindAndModify: false
 });
 
 const db = mongoose.connection;
@@ -33,6 +35,7 @@ app.engine('ejs',ejsMate);
 app.set('view engine', 'ejs')
 app.set('views',path.join(__dirname,'views'))
 app.use(express.urlencoded({extended:true}))
+app.use(morgan('tiny'));
 app.use(flash());
 app.use(methodOverride('_method'))
     app.use(express.static(path.join(__dirname,'public')))

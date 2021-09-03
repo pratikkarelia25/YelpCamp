@@ -5,16 +5,17 @@ const Campground = require('../models/campground');
 const {isLoggedIn,isAuthor,validateCampground} = require('../middleware');
 const campground = require('../controller/campground')
 const multer = require('multer')
-const {storage} = require('../cloudinary/index')
+const {storage} = require('../cloudinary')
 const upload = multer({storage});
 
 router.route('/')
     .get(catchAsync(campground.index))
-    // .post(isLoggedIn,validateCampground,catchAsync(campground.createCampground));
-    .post(upload.array('image'),(req,res)=>{
-        console.log(req.body,req.file);
-        res.send("ITWORKED")
-    })
+    .post(isLoggedIn, validateCampground, catchAsync(campground.createCampground));
+    // .post(upload.single('image'),(req,res)=>{
+    //     console.log(req.file);
+    //     res.send("......")
+    // });
+    
 
 router.get('/new',isLoggedIn,campground.renderNewForm);
 

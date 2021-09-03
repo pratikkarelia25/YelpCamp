@@ -1,6 +1,8 @@
+// const campground = require('../models/campground');
 const Campground = require('../models/campground');
 
 module.exports.index = async(req,res)=>{
+
     const campgrounds = await Campground.find({})
     res.render('campgrounds/index',{campgrounds})
 }
@@ -9,12 +11,18 @@ module.exports.renderNewForm = (req,res)=>{
     res.render('campgrounds/new')
 }
 
-module.exports.createCampground = async(req,res)=>{
-    const newCampground = await Campground(req.body.campground)
+module.exports.createCampground = async (req, res, next)=>{
+    console.log(JSON.stringify(req.body, null, 4));
+    const newCampground = await Campground(req.body.campground);
+    // newCampground.image = req.files.map(f=>{url: f.path, filename: f.filename});
+    // console.log("hi")
     newCampground.author = req.user._id;
     newCampground.save();
+    console.log(newCampground)
     req.flash('success','Sucessfully made a new campground')
-    res.redirect(`/campgrounds/${newCampground._id}`)
+    res.redirect(`/campgrounds/${newCampground._id}`);
+
+    // next();
 }
 
 module.exports.showCampgrounds = async(req,res)=>{
