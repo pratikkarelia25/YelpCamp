@@ -42,11 +42,6 @@ app.use(flash());
 app.use(mongoSanitize());
 app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname,'public')))
-app.use((err,req,res,next)=>{
-    const {status = 500} = err;
-    if(!err.message) err.message = 'Oh no, Something went wrong'
-    res.status(status).render('error',{err})  
-})
 
 const sessionConfig = {
     name: '_sess',
@@ -108,26 +103,31 @@ app.use(
             fontSrc: ["'self'", ...fontSrcUrls],
         },
     })
-);
-app.use((req, res, next) => {
-    console.log(req.query)
-    res.locals.currentUser = req.user;
-    res.locals.success = req.flash('success');
-    res.locals.error = req.flash('error');
-    next();
-})
-
-app.use('/campgrounds',campgroundsRoutes)
-app.use('/campgrounds/:id/reviews',reviewsRoutes)
-app.use('/',userRoutes);
-
-app.get('/',(req,res)=>{
-    res.render('home')
-})
-// app.all('*',(req,res,next)=>{
-//     next(new expressError('Page not found',404))
-// })
-
-app.listen(3000,()=>{
-    console.log('On PORT 3000')
-})
+    );
+    app.use((req, res, next) => {
+        console.log(req.query)
+        res.locals.currentUser = req.user;
+        res.locals.success = req.flash('success');
+        res.locals.error = req.flash('error');
+        next();
+    })
+    
+    app.use('/campgrounds',campgroundsRoutes)
+    app.use('/campgrounds/:id/reviews',reviewsRoutes)
+    app.use('/',userRoutes);
+    
+    app.get('/',(req,res)=>{
+        res.render('home')
+    })
+    // app.all('*',(req,res,next)=>{
+        //     next(new expressError('Page not found',404))
+        // })
+        app.use((err,req,res,next)=>{
+            const {status = 500} = err;
+            if(!err.message) err.message = 'Oh no, Something went wrong'
+            res.status(status).render('error',{err})  
+        })
+        
+        app.listen(3000,()=>{
+            console.log('On PORT 3000')
+        })
